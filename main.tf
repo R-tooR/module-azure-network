@@ -33,7 +33,7 @@ resource "azurerm_virtual_network" "main" {
 
   tags = {
     "Name"                                        = local.vn_name,
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared",
+#    "kubernetes.io/cluster/${local.cluster_name}" = "shared",
   }
 }
 
@@ -45,29 +45,29 @@ resource "azurerm_subnet" "public-subnet-a" {
 
 }
 
-resource "azurerm_subnet" "public-subnet-b" {
-  name                 = azurerm_virtual_network.main.id
-  resource_group_name  = azurerm_resource_group.flight-reservation-app.name
-  virtual_network_name = "public-subnet-b"
-  address_prefixes     = [var.public_subnet_b_cidr]
-
-}
-
-resource "azurerm_subnet" "private-subnet-a" {
-  name                 = azurerm_virtual_network.main.id
-  resource_group_name  = azurerm_resource_group.flight-reservation-app.name
-  virtual_network_name = "private-subnet-a"
-  address_prefixes     = [var.private_subnet_a_cidr]
-
-}
-
-resource "azurerm_subnet" "private-subnet-b" {
-  name                 = azurerm_virtual_network.main.id
-  resource_group_name  = azurerm_resource_group.flight-reservation-app.name
-  virtual_network_name = "private-subnet-b"
-  address_prefixes     = [var.private_subnet_b_cidr]
-
-}
+#resource "azurerm_subnet" "public-subnet-b" {
+#  name                 = azurerm_virtual_network.main.id
+#  resource_group_name  = azurerm_resource_group.flight-reservation-app.name
+#  virtual_network_name = "public-subnet-b"
+#  address_prefixes     = [var.public_subnet_b_cidr]
+#
+#}
+#
+#resource "azurerm_subnet" "private-subnet-a" {
+#  name                 = azurerm_virtual_network.main.id
+#  resource_group_name  = azurerm_resource_group.flight-reservation-app.name
+#  virtual_network_name = "private-subnet-a"
+#  address_prefixes     = [var.private_subnet_a_cidr]
+#
+#}
+#
+#resource "azurerm_subnet" "private-subnet-b" {
+#  name                 = azurerm_virtual_network.main.id
+#  resource_group_name  = azurerm_resource_group.flight-reservation-app.name
+#  virtual_network_name = "private-subnet-b"
+#  address_prefixes     = [var.private_subnet_b_cidr]
+#
+#}
 
 ## -------------------------- Sieci publiczne ---------------------------
 
@@ -92,107 +92,107 @@ resource "azurerm_subnet_route_table_association" "public-a-association" {
   subnet_id      = azurerm_subnet.public-subnet-a.id
 }
 
-resource "azurerm_subnet_route_table_association" "public-b-association" {
-  route_table_id = azurerm_route_table.public-route.id
-  subnet_id      = azurerm_subnet.public-subnet-b.id
-}
-
+#resource "azurerm_subnet_route_table_association" "public-b-association" {
+#  route_table_id = azurerm_route_table.public-route.id
+#  subnet_id      = azurerm_subnet.public-subnet-b.id
+#}
+#
 resource "azurerm_public_ip" "nat-a" {
   name                = "nat-a"
   location            = azurerm_resource_group.flight-reservation-app.location
   resource_group_name = azurerm_resource_group.flight-reservation-app.name
-  allocation_method   = "Static"
-  sku = "Standard"
-  sku_tier = "Global"
+  allocation_method   = "Dynamic"
+#  sku = "Standard"
+#  sku_tier = "Global"
 
   tags = {
     "Name" = "${local.vn_name}-NAT-a"
   }
 }
 
-resource "azurerm_public_ip" "nat-b" {
-  name                = "nat-b"
-  location            = azurerm_resource_group.flight-reservation-app.location
-  resource_group_name = azurerm_resource_group.flight-reservation-app.name
-  allocation_method   = "Static"
-  sku = "Standard"
-  sku_tier = "Global"
-
-  tags = {
-    "Name" = "${local.vn_name}-NAT-b"
-  }
-}
-
-resource "azurerm_nat_gateway" "nat-gw-a" {
-  name                = "public-a-nat-gateway"
-  location            = azurerm_resource_group.flight-reservation-app.location
-  resource_group_name = azurerm_resource_group.flight-reservation-app.name
-
-  tags = {
-    "Name" = "${local.vn_name}-NAT-gw-a"
-  }
-}
-
-resource "azurerm_nat_gateway_public_ip_association" "nat-gw-publ-a" {
-  nat_gateway_id       = azurerm_nat_gateway.nat-gw-a.id
-  public_ip_address_id = azurerm_public_ip.nat-a.id
-}
-
-resource "azurerm_nat_gateway" "nat-gw-b" {
-  name                = "public-b-nat-gateway"
-  location            = azurerm_resource_group.flight-reservation-app.location
-  resource_group_name = azurerm_resource_group.flight-reservation-app.name
-
-  tags = {
-    "Name" = "${local.vn_name}-NAT-gw-b"
-  }
-}
-
-resource "azurerm_nat_gateway_public_ip_association" "nat-gw-publ-b" {
-  nat_gateway_id       = azurerm_nat_gateway.nat-gw-b.id
-  public_ip_address_id = azurerm_public_ip.nat-b.id
-}
+#resource "azurerm_public_ip" "nat-b" {
+#  name                = "nat-b"
+#  location            = azurerm_resource_group.flight-reservation-app.location
+#  resource_group_name = azurerm_resource_group.flight-reservation-app.name
+#  allocation_method   = "Static"
+#  sku = "Standard"
+#  sku_tier = "Global"
+#
+#  tags = {
+#    "Name" = "${local.vn_name}-NAT-b"
+#  }
+#}
+#
+#resource "azurerm_nat_gateway" "nat-gw-a" {
+#  name                = "public-a-nat-gateway"
+#  location            = azurerm_resource_group.flight-reservation-app.location
+#  resource_group_name = azurerm_resource_group.flight-reservation-app.name
+#
+#  tags = {
+#    "Name" = "${local.vn_name}-NAT-gw-a"
+#  }
+#}
+#
+#resource "azurerm_nat_gateway_public_ip_association" "nat-gw-publ-a" {
+#  nat_gateway_id       = azurerm_nat_gateway.nat-gw-a.id
+#  public_ip_address_id = azurerm_public_ip.nat-a.id
+#}
+#
+#resource "azurerm_nat_gateway" "nat-gw-b" {
+#  name                = "public-b-nat-gateway"
+#  location            = azurerm_resource_group.flight-reservation-app.location
+#  resource_group_name = azurerm_resource_group.flight-reservation-app.name
+#
+#  tags = {
+#    "Name" = "${local.vn_name}-NAT-gw-b"
+#  }
+#}
+#
+#resource "azurerm_nat_gateway_public_ip_association" "nat-gw-publ-b" {
+#  nat_gateway_id       = azurerm_nat_gateway.nat-gw-b.id
+#  public_ip_address_id = azurerm_public_ip.nat-b.id
+#}
 
 ## ------------------------- Sieci prywatne ------------------------------
 
-resource "azurerm_route_table" "private-route-a" {
-  location            = var.azure_region
-  name                = azurerm_virtual_network.main.id
-  resource_group_name = azurerm_resource_group.flight-reservation-app.name
+#resource "azurerm_route_table" "private-route-a" {
+#  location            = var.azure_region
+#  name                = azurerm_virtual_network.main.id
+#  resource_group_name = azurerm_resource_group.flight-reservation-app.name
+#
+#  route {
+#    address_prefix = "0.0.0.0/0"
+#    name           = "internet-traffic-a"
+#    next_hop_type  = "VirtualNetworkGateway"
+#  }
+#
+#  tags = {
+#    "Name" = "${local.vn_name}-private-route-a"
+#  }
+#}
 
-  route {
-    address_prefix = "0.0.0.0/0"
-    name           = "internet-traffic-a"
-    next_hop_type  = "VirtualNetworkGateway"
-  }
+#resource "azurerm_route_table" "private-route-b" {
+#  location            = var.azure_region
+#  name                = azurerm_virtual_network.main.id
+#  resource_group_name = azurerm_resource_group.flight-reservation-app.name
+#
+#  route {
+#    address_prefix = "0.0.0.0/0"
+#    name           = "internet-traffic-b"
+#    next_hop_type  = "VirtualNetworkGateway"
+#  }
+#
+#  tags = {
+#    "Name" = "${local.vn_name}-private-route-b"
+#  }
+#}
 
-  tags = {
-    "Name" = "${local.vn_name}-private-route-a"
-  }
-}
-
-resource "azurerm_route_table" "private-route-b" {
-  location            = var.azure_region
-  name                = azurerm_virtual_network.main.id
-  resource_group_name = azurerm_resource_group.flight-reservation-app.name
-
-  route {
-    address_prefix = "0.0.0.0/0"
-    name           = "internet-traffic-b"
-    next_hop_type  = "VirtualNetworkGateway"
-  }
-
-  tags = {
-    "Name" = "${local.vn_name}-private-route-b"
-  }
-}
-
-resource "azurerm_subnet_route_table_association" "private-a-association" {
-  route_table_id = azurerm_route_table.private-route-a.id
-  subnet_id      = azurerm_subnet.private-subnet-a.id
-}
-
-resource "azurerm_subnet_route_table_association" "private-b-association" {
-  route_table_id = azurerm_route_table.private-route-b.id
-  subnet_id      = azurerm_subnet.private-subnet-b.id
-}
+#resource "azurerm_subnet_route_table_association" "private-a-association" {
+#  route_table_id = azurerm_route_table.private-route-a.id
+#  subnet_id      = azurerm_subnet.private-subnet-a.id
+#}
+#
+#resource "azurerm_subnet_route_table_association" "private-b-association" {
+#  route_table_id = azurerm_route_table.private-route-b.id
+#  subnet_id      = azurerm_subnet.private-subnet-b.id
+#}
