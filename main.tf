@@ -80,7 +80,7 @@ resource "azurerm_route_table" "public-route" {
   route {
     address_prefix = "0.0.0.0/0"
     name           = "internet-traffic"
-    next_hop_type  = "VirtualNetworkGateway"
+    next_hop_type  = "Internet"
   }
 
   tags = {
@@ -137,6 +137,17 @@ resource "azurerm_nat_gateway_public_ip_association" "nat-gw-publ-a" {
   nat_gateway_id       = azurerm_nat_gateway.nat-gw-a.id
   public_ip_address_id = azurerm_public_ip.nat-a.id
 }
+
+#resource "azurerm_virtual_network_gateway" "gw-a" {
+#
+#  location            = azurerm_resource_group.flight-reservation-app.location
+#  name                = "public-a-network-gateway"
+#  resource_group_name = azurerm_resource_group.flight-reservation-app.name
+#  sku                 = "Standard"
+#  type                = ""
+#  ip_configuration {}
+#}
+
 #
 #resource "azurerm_nat_gateway" "nat-gw-b" {
 #  name                = "public-b-nat-gateway"
@@ -157,7 +168,7 @@ resource "azurerm_nat_gateway_public_ip_association" "nat-gw-publ-a" {
 
 #resource "azurerm_route_table" "private-route-a" {
 #  location            = var.azure_region
-#  name                = azurerm_virtual_network.main.id
+#  name                = azurerm_virtual_network.main.name
 #  resource_group_name = azurerm_resource_group.flight-reservation-app.name
 #
 #  route {
@@ -192,6 +203,16 @@ resource "azurerm_nat_gateway_public_ip_association" "nat-gw-publ-a" {
 #  subnet_id      = azurerm_subnet.private-subnet-a.id
 #}
 #
+#resource "azurerm_nat_gateway" "nat-gw-a" {
+#  name                = "private-a-nat-gateway"
+#  location            = azurerm_resource_group.flight-reservation-app.location
+#  resource_group_name = azurerm_resource_group.flight-reservation-app.name
+#  tags = {
+#    "Name" = "${local.vn_name}-NAT-gw-a"
+#  }
+#}
+
+
 #resource "azurerm_subnet_route_table_association" "private-b-association" {
 #  route_table_id = azurerm_route_table.private-route-b.id
 #  subnet_id      = azurerm_subnet.private-subnet-b.id
