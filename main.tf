@@ -24,6 +24,7 @@ resource "azurerm_resource_group" "flight-reservation-app" {
 # - local_network_gateway
 # - nat_gateway_public_ip_association
 # https://docs.microsoft.com/en-us/azure/developer/terraform/hub-spoke-on-prem <- podobno sieci prywatne
+# https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-point-to-site-rm-ps
 
 resource "azurerm_virtual_network" "main" {
   address_space       = [var.main_vn_cidr]
