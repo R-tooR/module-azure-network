@@ -74,7 +74,7 @@ resource "azurerm_subnet" "public-subnet-a" {
 
 resource "azurerm_route_table" "public-route" {
   location            = var.azure_region
-  name                = azurerm_virtual_network.main.id
+  name                = azurerm_virtual_network.main.name
   resource_group_name = azurerm_resource_group.flight-reservation-app.name
 
   route {
