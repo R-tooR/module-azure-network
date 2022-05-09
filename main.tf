@@ -102,7 +102,7 @@ resource "azurerm_public_ip" "nat-a" {
   name                = "nat-a"
   location            = azurerm_resource_group.flight-reservation-app.location
   resource_group_name = azurerm_resource_group.flight-reservation-app.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
   sku = "Standard"
 #  sku_tier = "Global"
 
