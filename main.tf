@@ -102,6 +102,8 @@ resource "azurerm_public_ip" "nat-a" {
   location            = azurerm_resource_group.flight-reservation-app.location
   resource_group_name = azurerm_resource_group.flight-reservation-app.name
   allocation_method   = "Static"
+  sku = "Standard"
+  sku_tier = "Global"
 
   tags = {
     "Name" = "${local.vn_name}-NAT-a"
@@ -113,6 +115,8 @@ resource "azurerm_public_ip" "nat-b" {
   location            = azurerm_resource_group.flight-reservation-app.location
   resource_group_name = azurerm_resource_group.flight-reservation-app.name
   allocation_method   = "Static"
+  sku = "Standard"
+  sku_tier = "Global"
 
   tags = {
     "Name" = "${local.vn_name}-NAT-b"
