@@ -1,5 +1,5 @@
 provider "azurerm" {
-#  region = var.azure_region
+  #  region = var.azure_region
   features {}
 }
 
@@ -10,7 +10,7 @@ locals {
 
 resource "azurerm_resource_group" "flight-reservation" {
   name     = "flight-reservation"
-  location = "eastus"
+  location = var.azure_region
 }
 
 #data "azurerm_availability_zones" "available" {
@@ -30,7 +30,7 @@ resource "azurerm_resource_group" "flight-reservation" {
 
 resource "azurerm_virtual_network" "main" {
   address_space       = [var.main_vn_cidr]
-  location            = "eastus"
+  location            = var.azure_region
   name                = "main"
   resource_group_name = azurerm_resource_group.flight-reservation.name
 
@@ -44,73 +44,45 @@ resource "azurerm_subnet" "public-subnet-a" {
   name                 = azurerm_virtual_network.main.id
   resource_group_name  = azurerm_resource_group.flight-reservation.name
   virtual_network_name = "public-subnet-a"
-  address_prefixes     = [var.main_vn_cidr]
+  address_prefixes     = [var.public_subnet_a_cidr]
 
-#  tags = {
-#    "Name" = (
-#      "${local.vn_name}-public-subnet-a"
-#    ),
-#    "kubernetes.io/cluster/${local.cluster_name}" = "shared",
-#    "kubernetes.io/role/elb"                      = "1"
-#  }
 }
 
 resource "azurerm_subnet" "public-subnet-b" {
   name                 = azurerm_virtual_network.main.id
   resource_group_name  = azurerm_resource_group.flight-reservation.name
   virtual_network_name = "public-subnet-b"
-  address_prefixes     = [var.main_vn_cidr]
+  address_prefixes     = [var.public_subnet_b_cidr]
 
-#  tags = {
-#    "Name" = (
-#      "${local.vn_name}-public-subnet-b"
-#    ),
-#    "kubernetes.io/cluster/${local.cluster_name}" = "shared",
-#    "kubernetes.io/role/elb"                      = "1"
-#  }
 }
 
 resource "azurerm_subnet" "private-subnet-a" {
   name                 = azurerm_virtual_network.main.id
   resource_group_name  = azurerm_resource_group.flight-reservation.name
   virtual_network_name = "private-subnet-a"
-  address_prefixes     = [var.main_vn_cidr]
+  address_prefixes     = [var.private_subnet_a_cidr]
 
-#  tags = {
-#    "Name" = (
-#      "${local.vn_name}-private-subnet-a"
-#    ),
-#    "kubernetes.io/cluster/${local.cluster_name}" = "shared",
-#    "kubernetes.io/role/elb"                      = "1"
-#  }
 }
 
 resource "azurerm_subnet" "private-subnet-b" {
   name                 = azurerm_virtual_network.main.id
   resource_group_name  = azurerm_resource_group.flight-reservation.name
   virtual_network_name = "private-subnet-b"
-  address_prefixes     = [var.main_vn_cidr]
+  address_prefixes     = [var.private_subnet_b_cidr]
 
-#  tags = {
-#    "Name" = (
-#      "${local.vn_name}-private-subnet-b"
-#    ),
-#    "kubernetes.io/cluster/${local.cluster_name}" = "shared",
-#    "kubernetes.io/role/elb"                      = "1"
-#  }
 }
 
 ## -------------------------- Sieci publiczne ---------------------------
 
 resource "azurerm_route_table" "public-route" {
-  location            = "eastus"
+  location            = var.azure_region
   name                = azurerm_virtual_network.main.id
   resource_group_name = azurerm_resource_group.flight-reservation.name
 
   route {
     address_prefix = "0.0.0.0/0"
     name           = "internet-traffic"
-    next_hop_type  = "VnetLocal"
+    next_hop_type  = "VirtualNetworkGateway"
   }
 
   tags = {
@@ -183,14 +155,14 @@ resource "azurerm_nat_gateway_public_ip_association" "nat-gw-publ-b" {
 ## ------------------------- Sieci prywatne ------------------------------
 
 resource "azurerm_route_table" "private-route-a" {
-  location            = "eastus"
+  location            = var.azure_region
   name                = azurerm_virtual_network.main.id
   resource_group_name = azurerm_resource_group.flight-reservation.name
 
   route {
     address_prefix = "0.0.0.0/0"
-    name           = "internet-traffic"
-    next_hop_type  = "VnetLocal"
+    name           = "internet-traffic-a"
+    next_hop_type  = "VirtualNetworkGateway"
   }
 
   tags = {
@@ -199,14 +171,14 @@ resource "azurerm_route_table" "private-route-a" {
 }
 
 resource "azurerm_route_table" "private-route-b" {
-  location            = "eastus"
+  location            = var.azure_region
   name                = azurerm_virtual_network.main.id
   resource_group_name = azurerm_resource_group.flight-reservation.name
 
   route {
     address_prefix = "0.0.0.0/0"
-    name           = "internet-traffic"
-    next_hop_type  = "VnetLocal"
+    name           = "internet-traffic-b"
+    next_hop_type  = "VirtualNetworkGateway"
   }
 
   tags = {
