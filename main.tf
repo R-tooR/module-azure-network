@@ -138,6 +138,11 @@ resource "azurerm_nat_gateway_public_ip_association" "nat-gw-publ-a" {
   public_ip_address_id = azurerm_public_ip.nat-a.id
 }
 
+resource "azurerm_subnet_nat_gateway_association" "nat-gw-sn-a" {
+  subnet_id      = azurerm_subnet.public-subnet-a.id
+  nat_gateway_id = azurerm_nat_gateway.nat-gw-a.id
+}
+
 #resource "azurerm_virtual_network_gateway" "gw-a" {
 #
 #  location            = azurerm_resource_group.flight-reservation-app.location
