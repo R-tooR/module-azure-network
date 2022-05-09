@@ -128,16 +128,15 @@ resource "azurerm_nat_gateway" "nat-gw-a" {
   name                = "public-a-nat-gateway"
   location            = azurerm_resource_group.flight-reservation-app.location
   resource_group_name = azurerm_resource_group.flight-reservation-app.name
-
   tags = {
     "Name" = "${local.vn_name}-NAT-gw-a"
   }
 }
-#
-#resource "azurerm_nat_gateway_public_ip_association" "nat-gw-publ-a" {
-#  nat_gateway_id       = azurerm_nat_gateway.nat-gw-a.id
-#  public_ip_address_id = azurerm_public_ip.nat-a.id
-#}
+
+resource "azurerm_nat_gateway_public_ip_association" "nat-gw-publ-a" {
+  nat_gateway_id       = azurerm_nat_gateway.nat-gw-a.id
+  public_ip_address_id = azurerm_public_ip.nat-a.id
+}
 #
 #resource "azurerm_nat_gateway" "nat-gw-b" {
 #  name                = "public-b-nat-gateway"
