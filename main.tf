@@ -54,13 +54,13 @@ resource "azurerm_subnet" "public-subnet-a" {
 #
 #}
 #
-#resource "azurerm_subnet" "private-subnet-a" {
-#  name                 = azurerm_virtual_network.main.id
-#  resource_group_name  = azurerm_resource_group.flight-reservation-app.name
-#  virtual_network_name = "private-subnet-a"
-#  address_prefixes     = [var.private_subnet_a_cidr]
-#
-#}
+resource "azurerm_subnet" "private-subnet-a" {
+  name                 = azurerm_virtual_network.main.id
+  resource_group_name  = azurerm_resource_group.flight-reservation-app.name
+  virtual_network_name = "private-subnet-a"
+  address_prefixes     = [var.private_subnet_a_cidr]
+
+}
 #
 #resource "azurerm_subnet" "private-subnet-b" {
 #  name                 = azurerm_virtual_network.main.id
@@ -171,21 +171,21 @@ resource "azurerm_subnet_nat_gateway_association" "nat-gw-sn-a" {
 
 ## ------------------------- Sieci prywatne ------------------------------
 
-#resource "azurerm_route_table" "private-route-a" {
-#  location            = var.azure_region
-#  name                = azurerm_virtual_network.main.name
-#  resource_group_name = azurerm_resource_group.flight-reservation-app.name
-#
-#  route {
-#    address_prefix = "0.0.0.0/0"
-#    name           = "internet-traffic-a"
-#    next_hop_type  = "VirtualNetworkGateway"
-#  }
-#
-#  tags = {
-#    "Name" = "${local.vn_name}-private-route-a"
-#  }
-#}
+resource "azurerm_route_table" "private-route-a" {
+  location            = var.azure_region
+  name                = azurerm_virtual_network.main.name
+  resource_group_name = azurerm_resource_group.flight-reservation-app.name
+
+  route {
+    address_prefix = "0.0.0.0/0"
+    name           = "internet-traffic-a"
+    next_hop_type  = "VirtualNetworkGateway"
+  }
+
+  tags = {
+    "Name" = "${local.vn_name}-private-route-a"
+  }
+}
 
 #resource "azurerm_route_table" "private-route-b" {
 #  location            = var.azure_region
@@ -203,20 +203,42 @@ resource "azurerm_subnet_nat_gateway_association" "nat-gw-sn-a" {
 #  }
 #}
 
-#resource "azurerm_subnet_route_table_association" "private-a-association" {
-#  route_table_id = azurerm_route_table.private-route-a.id
-#  subnet_id      = azurerm_subnet.private-subnet-a.id
-#}
-#
-#resource "azurerm_nat_gateway" "nat-gw-a" {
-#  name                = "private-a-nat-gateway"
-#  location            = azurerm_resource_group.flight-reservation-app.location
-#  resource_group_name = azurerm_resource_group.flight-reservation-app.name
-#  tags = {
-#    "Name" = "${local.vn_name}-NAT-gw-a"
-#  }
-#}
+resource "azurerm_subnet_route_table_association" "private-a-association" {
+  route_table_id = azurerm_route_table.private-route-a.id
+  subnet_id      = azurerm_subnet.private-subnet-a.id
+}
 
+resource "azurerm_nat_gateway" "nat-gw-priv-a" {
+  name                = "private-a-nat-gateway"
+  location            = azurerm_resource_group.flight-reservation-app.location
+  resource_group_name = azurerm_resource_group.flight-reservation-app.name
+  tags = {
+    "Name" = "${local.vn_name}-NAT-gw-a"
+  }
+}
+
+resource "azurerm_public_ip" "nat-priv-a" {
+  name                = "nat-priv-a"
+  location            = azurerm_resource_group.flight-reservation-app.location
+  resource_group_name = azurerm_resource_group.flight-reservation-app.name
+  allocation_method   = "Static"
+  sku = "Standard"
+  #  sku_tier = "Global"
+
+  tags = {
+    "Name" = "${local.vn_name}-NAT-a"
+  }
+}
+
+resource "azurerm_subnet_nat_gateway_association" "nat-gw-sn-priv-a" {
+  subnet_id      = azurerm_subnet.private-subnet-a.id
+  nat_gateway_id = azurerm_nat_gateway.nat-gw-priv-a.id
+}
+
+resource "azurerm_nat_gateway_public_ip_association" "nat-gw-priv-a" {
+  nat_gateway_id       = azurerm_nat_gateway.nat-gw-priv-a.id
+  public_ip_address_id = azurerm_public_ip.nat-priv-a.id
+}
 
 #resource "azurerm_subnet_route_table_association" "private-b-association" {
 #  route_table_id = azurerm_route_table.private-route-b.id
