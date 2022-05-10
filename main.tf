@@ -74,7 +74,7 @@ resource "azurerm_subnet" "private-subnet-a" {
 
 resource "azurerm_route_table" "public-route" {
   location            = var.azure_region
-  name                = azurerm_virtual_network.main.name
+  name                = azurerm_subnet.public-subnet-a.name
   resource_group_name = azurerm_resource_group.flight-reservation-app.name
 
   route {
@@ -173,7 +173,7 @@ resource "azurerm_subnet_nat_gateway_association" "nat-gw-sn-a" {
 
 resource "azurerm_route_table" "private-route-a" {
   location            = var.azure_region
-  name                = azurerm_virtual_network.main.name
+  name                = azurerm_subnet.private-subnet-a.name
   resource_group_name = azurerm_resource_group.flight-reservation-app.name
 
   route {
