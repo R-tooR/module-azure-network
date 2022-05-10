@@ -18,9 +18,9 @@ output "public_subnet_ids" {
   ]
 }
 
-#output "private_subnet_ids" {
-#  value = [
-#    azurerm_subnet.private-subnet-a.name,
+output "private_subnet_ids" {
+  value = [
+    azurerm_subnet.private-subnet-a.name,
 #    azurerm_subnet.private-subnet-b.name,
-#  ]
-#}
+  ]
+}
