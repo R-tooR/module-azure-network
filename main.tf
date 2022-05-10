@@ -55,9 +55,9 @@ resource "azurerm_subnet" "public-subnet-a" {
 #}
 #
 resource "azurerm_subnet" "private-subnet-a" {
-  name                 = azurerm_virtual_network.main.id
+  name                 = "private-subnet-a"
   resource_group_name  = azurerm_resource_group.flight-reservation-app.name
-  virtual_network_name = "private-subnet-a"
+  virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = [var.private_subnet_a_cidr]
 
 }
