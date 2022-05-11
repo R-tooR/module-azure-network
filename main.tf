@@ -179,7 +179,8 @@ resource "azurerm_route_table" "private-route-a" {
   route {
     address_prefix = "0.0.0.0/0"
     name           = "internet-traffic-a"
-    next_hop_type  = "VirtualNetworkGateway"
+    next_hop_type  = "Internet"
+#    next_hop_type  = "VirtualNetworkGateway"
   }
 
   tags = {

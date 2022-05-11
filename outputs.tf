@@ -6,7 +6,7 @@ output "subnet_ids" {
   value = [
     azurerm_subnet.public-subnet-a.id,
 #    azurerm_subnet.public-subnet-b.name,
-#    azurerm_subnet.private-subnet-a.name,
+    azurerm_subnet.private-subnet-a.name,
 #    azurerm_subnet.private-subnet-b.name,
   ]
 }
